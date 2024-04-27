@@ -55,6 +55,18 @@ class SSHLogEntry(metaclass=abc.ABCMeta):
             return self.date > other.date
         return NotImplemented
 
+    def __getattr__(self, item):
+        if item == 'message':
+            return self.msg
+        elif item == 'date':
+            return self.date
+        elif item == 'pid_number':
+            return self.pid_number
+        elif item == 'hostname':
+            return self.hostname
+        else:
+            raise AttributeError(f"'{type(self).__name__}' nie ma atrybutu '{item}'")
+
     @property
     def has_ip(self):
         try:
