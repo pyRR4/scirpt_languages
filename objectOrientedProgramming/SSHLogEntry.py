@@ -29,7 +29,7 @@ class SSHLogEntry(metaclass=abc.ABCMeta):
             self.hostname = hostname
             self._raw_log = log
         else:
-            print("nie udalo sie zmatchowac loga")
+            raise ValueError
 
     def __str__(self):
         return (f'Data: {self.date} | Numer PID: {self.pid_number} | Wiadomość: {self.msg} '
@@ -76,6 +76,17 @@ class SSHLogEntry(metaclass=abc.ABCMeta):
 
     def get_raw_log(self):
         return self._raw_log
+
+    @classmethod
+    def get_log_type(cls, msg):
+        if re.search("Failed password", msg):
+            return IncorrectPasswordEntry
+        elif re.search("Accepted password", msg):
+            return CorrectPasswordEntry
+        elif re.search("error", msg):
+            return ErrorEntry
+        else:
+            return OtherEntry
 
     @classmethod
     def get_ipv4s_from_log(cls, log):
