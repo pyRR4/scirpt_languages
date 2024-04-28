@@ -2,7 +2,7 @@ import datetime
 import math
 import random
 
-import ssh_log_reader
+from wyrazeniaRegularne import ssh_log_reader
 
 
 def get_user_logs(logs):
