@@ -1,7 +1,7 @@
 import datetime
 import ipaddress
 
-import SSHLogEntry
+from SSHLogEntry import SSHLogEntry, ValueNotFound
 
 
 class SSHLogJournal:
@@ -9,7 +9,7 @@ class SSHLogJournal:
         self.entries_list = []
 
     def append(self, log):
-        entry = SSHLogEntry.SSHLogEntry.get_log_type(log)(log)
+        entry = SSHLogEntry.get_log_type(log)(log)
         if entry.validate():
             self.entries_list.append(entry)
         else:
@@ -31,22 +31,28 @@ class SSHLogJournal:
                 date = entry.__getattr__('date')
                 if date == item:
                     attr_list.append(date)
-                return attr_list
+            return attr_list
         elif isinstance(item, int):
             return self.entries_list[item]
         elif isinstance(item, ipaddress.IPv4Address):
             attr_list = []
             for entry in self.entries_list:
-                ip = entry.get_ipv4s()
-                if ip == item:
-                    attr_list.append(item)
-                return attr_list
+                try:
+                    ip = entry.get_ipv4s()
+                    if ip == item:
+                        attr_list.append(entry)
+                except ValueNotFound:
+                    pass
+            return attr_list
         else:
             raise AttributeError(f"{self.__class__.__name__} nie pozwala na pozyskanie atrybutów po {item}")
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            return self.entries_list[key.start:key.stop:key.step]
+            start = key.start if key.start is not None else 0
+            stop = key.stop if key.stop is not None else 0
+            step = key.step if key.step is not None else 1
+            return self.entries_list[start:stop:step]
         else:
             return self.entries_list[key]
 

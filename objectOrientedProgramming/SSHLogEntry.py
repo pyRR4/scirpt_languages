@@ -38,10 +38,10 @@ class SSHLogEntry(metaclass=abc.ABCMeta):
     def __repr__(self):
         return (f"{type(self).__name__}(date={self.date}, msg='{self.msg}', "
                 f"pid_number={self.pid_number}, hostname='{self.hostname}', "
-                f"has_ip='{self.has_ip}', )")
+                f"has_ip='{self.has_ip}')")
 
     def __eq__(self, other):
-        if isinstance(other, SSHLogEntry):
+        if hasattr(other, "_raw_log"):
             return self._raw_log == other.get_raw_log()
         return NotImplemented
 
@@ -126,6 +126,18 @@ class IncorrectPasswordEntry(SSHLogEntry):
     def validate(self):
         return super().get_message_type(self.msg) == "failed login"
 
+    def __eq__(self, other):
+        return super().__eq__(other)
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __lt__(self, other):
+        return super().__lt__(other)
+
+    def __gt__(self, other):
+        return super().__gt__(other)
+
 
 class CorrectPasswordEntry(SSHLogEntry):
     def __init__(self, log):
@@ -133,6 +145,18 @@ class CorrectPasswordEntry(SSHLogEntry):
 
     def validate(self):
         return super().get_message_type(self.msg) == "successful login"
+
+    def __eq__(self, other):
+        return super().__eq__(other)
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __lt__(self, other):
+        return super().__lt__(other)
+
+    def __gt__(self, other):
+        return super().__gt__(other)
 
 
 class ErrorEntry(SSHLogEntry):
@@ -142,6 +166,18 @@ class ErrorEntry(SSHLogEntry):
     def validate(self):
         return super().get_message_type(self.msg) == "error"
 
+    def __eq__(self, other):
+        return super().__eq__(other)
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __lt__(self, other):
+        return super().__lt__(other)
+
+    def __gt__(self, other):
+        return super().__gt__(other)
+
 
 class OtherEntry(SSHLogEntry):
     def __init__(self, log):
@@ -150,9 +186,15 @@ class OtherEntry(SSHLogEntry):
     def validate(self):
         return True
 
+    def __eq__(self, other):
+        return super().__eq__(other)
 
-if __name__ == '__main__':
-    log_instance = SSHLogEntry("Dec 10 23:04:09 LabSZ sshd[20032]: "
-                               "Failed password for root from 123.235.32.19 port 33548 ssh2")
-    print(log_instance)
-    print(log_instance.get_ipv4s())
+    def __repr__(self):
+        return super().__repr__()
+
+    def __lt__(self, other):
+        return super().__lt__(other)
+
+    def __gt__(self, other):
+        return super().__gt__(other)
+

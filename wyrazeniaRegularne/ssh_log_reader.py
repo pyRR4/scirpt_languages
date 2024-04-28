@@ -30,7 +30,7 @@ def match_log(log):
 
     date = datetime.datetime.strptime(match.group(1), "%b %d %H:%M:%S")
     if date.month == 1:
-        date.replace(year=2024)
+        date = date.replace(year=2024)
     else:
         date = date.replace(year=2023)
     timestamp = date
