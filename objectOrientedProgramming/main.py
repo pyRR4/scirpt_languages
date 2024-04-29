@@ -38,11 +38,13 @@ if __name__ == '__main__':
         if element.has_ip:
             print(element.get_ipv4s())
 
-    #print("\n\n=================__contains__:===================")
-    #print(journal.__contains__("jakis log"))
-    #log_msg = "Dec 10 17:00:39 LabSZ sshd[17923]: Received disconnect from 183.62.140.253: 11: Bye Bye [preauth]\n"
-    #existing_log = SSHLogEntry.get_log_type(log_msg)(log_msg)
-    #print(journal.__contains__(existing_log)) #contains
+    print("\n\n=================__contains__:===================")
+    print("Sprawdzany log: \"jakis log\"")
+    print(f"contains: {journal.__contains__("jakis log")}")
+    log_msg = "Dec 10 17:00:39 LabSZ sshd[17923]: Received disconnect from 183.62.140.253: 11: Bye Bye [preauth]\n"
+    print(f"Sprawdzany log: \"{log_msg}\"")
+    existing_log = SSHLogEntry.get_log_type(log_msg)(log_msg)
+    print(f"contains: {journal.__contains__(existing_log)}") #contains
 
     print("\n\n=================Kacze typowanie, przy pomocy slicingu:===================")
     helper_list = validate_list[:10] + journal[5:15:2]
