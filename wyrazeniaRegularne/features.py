@@ -1,8 +1,7 @@
 import datetime
 import math
 import random
-
-from wyrazeniaRegularne import ssh_log_reader
+import ssh_log_reader
 
 
 def get_user_logs(logs):
