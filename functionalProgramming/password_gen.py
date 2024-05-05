@@ -31,10 +31,10 @@ for pswd in passwords_generator:
 print('\n')
 
 passwords_generator = PasswordGenerator(8, 4, "abcd")
-
+it = iter(passwords_generator)
 while True:
     try:
-        print(next(passwords_generator))
+        print(next(it))
     except StopIteration:
         break
 
