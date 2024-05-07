@@ -41,8 +41,14 @@ def atmost(n, pred, iterable):
 
 
 lst = [x for x in range(1, 20)]
+n = 10
+print(f"lst: {lst},\nn: {n}")
 
-print(atmost(9, lambda x: x <= 10, lst))
-print(atleast(11, lambda x: x <= 10, lst))
-print(exists(lambda x: x <= 0, lst))
-print(forall(lambda x: x <= 10, lst))
+print("atmost in lst for x <= n")
+print(atmost(9, lambda x: x <= n, lst))
+print("atleast in lst for x <= n")
+print(atleast(11, lambda x: x <= n, lst))
+print("exists in lst for x <= n")
+print(exists(lambda x: x <= n, lst))
+print("forall in lst for x <= n")
+print(forall(lambda x: x <= n, lst))

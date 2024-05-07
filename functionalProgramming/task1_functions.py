@@ -59,10 +59,29 @@ def flatten(lst_of_lst):
                     if isinstance(lst_of_lst[0], tuple) else [lst_of_lst[0]] + flatten(lst_of_lst[1:])))
 
 
-print(even_count([1, 2, 3, 4, 5]))
-print(median([999, 3213, 3214, 320, 43]))
-print(newton_square_root(3, 0.1))
-print(str(make_alpha_square("siema sieniema")))
-#print(flatten((1, (1, 2, 3), (4, (5, (6, 7))), 8)))
-print(flatten([1, 2, [3, 4, [5, 6, [7, 8], 9], 10], (11, (12, 15), 13)]))
+eve_lst = [1, 2, 3, 4, 5]
+print(f"even count for {eve_lst}")
+print(even_count(eve_lst))
+print('\n')
+
+median_lst = [999, 3213, 3214, 320, 43]
+print(f"median for {median_lst}")
+print(median(median_lst))
+print('\n')
+
+x_arg = 3
+epsilon_arg = 0.1
+print(f"newton square root for x: {x_arg}, epsilon: {epsilon_arg}")
+print(newton_square_root(x_arg, epsilon_arg))
+print('\n')
+
+alpha_sq_string = "siema sieniema"
+print("make alpha square for \"" + alpha_sq_string + '\"')
+print(str(make_alpha_square(alpha_sq_string)))
+print('\n')
+
+flatten_structure = [1, 2, [3, 4, [5, 6, [7, 8], 9], 10], (11, (12, 15), 13)]
+print(f"flatten for structure: {flatten_structure}")
+print(flatten(flatten_structure))
+print('\n')
 
