@@ -1,10 +1,167 @@
 #:kivy 2.3.0
 
-<logWindow>:
+
+<LogGrid>:
+    cols: 1
+    rows: 1
+
+
+<LogWindow>:
+    path: path
+    start_date: start_date
+    end_date = ObjectProperty(None)
+    scrolled_list = ObjectProperty(None)
+    host = ObjectProperty(None)
+    date = ObjectProperty(None)
+    time = ObjectProperty(None)
+    timezone = ObjectProperty(None)
+    status_code = ObjectProperty(None)
+    method = ObjectProperty(None)
+    resource = ObjectProperty(None)
+    size = ObjectProperty(None)
+
     BoxLayout:
-        Button:
-            text: 'Button1'
-            size_hint: 1, 1
-        Button:
-            text: 'Button2'
-            size_hint: 1, 1
+        orientation: 'vertical'
+        size: root.width, root.height
+        spacing: (0.05 * root.height)
+        padding: (0.04 * root.height)
+
+        BoxLayout:
+            size_hint: 1, 0.2
+            spacing: 0.05 * self.parent.width
+
+            LogGrid:
+                size_hint: 0.7, 1
+                BoxLayout:
+                    pos: self.parent.pos
+
+                    LogGrid:
+                        size_hint: 0.9, 0.4
+                        pos_hint: {'center_y': .5}
+
+                        TextInput:
+                            id: path
+                            font_size: self.parent.height - 20
+
+                    Button:
+                        size_hint: 0.1, 0.4
+                        pos_hint: {'center_y': .5}
+                        height: 35
+                        text: "Load"
+
+
+
+
+            LogGrid:
+                size_hint: 0.3, 0.6
+                pos_hint: {'center_y': .5}
+                padding: 0.1 * self.parent.height
+                Button:
+                    text: "Open"
+
+
+        BoxLayout:
+            spacing: 0.05 * root.height
+
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: (0.05 * self.parent.height)
+                padding: (0.04 * self.parent.height)
+                size_hint: 0.6, 1
+
+                BoxLayout:
+                    spacing: (0.05 * self.parent.width)
+                    padding: (0.04 * self.parent.width)
+                    size_hint: 1, 0.2
+                    BoxLayout:
+                        Label:
+                            text: "From:"
+                        LogGrid:
+                            size_hint: 0.8, 0.9
+                            pos_hint: {'center_y': .5}
+
+                            TextInput:
+                                id: start_date
+                                size: self.parent.size
+                                font_size: self.parent.height - 20
+
+                    BoxLayout:
+                        Label:
+                            text: "To:"
+                        LogGrid:
+                            size_hint: 0.8, 0.9
+                            pos_hint: {'center_y': .5}
+
+                            TextInput:
+                                id: end_date
+                                size: self.parent.size
+                                font_size: self.parent.height - 20
+                RecycleBoxLayout:
+                    size_hint: 1, 0.9
+                    viewclass: 'Label'
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: 0.4, 1
+                spacing: (0.01 * self.parent.height)
+                padding: (0.04 * self.parent.height)
+
+                BoxLayout:
+                    spacing: (0.01 * self.parent.height)
+                    padding: (0.01 * self.parent.height)
+
+                    Label:
+                        halign: "left"
+                        text: "Remote host"
+                    TextInput:
+                BoxLayout:
+                    spacing: (0.01 * self.parent.height)
+                    padding: (0.01 * self.parent.height)
+
+                    Label:
+                        halign: "left"
+                        text: "Date"
+                    TextInput:
+                BoxLayout:
+                    spacing: (0.01 * self.parent.height)
+                    padding: (0.01 * self.parent.height)
+
+                    BoxLayout:
+                        Label:
+                            halign: "left"
+                            text: "Time"
+                        TextInput:
+                    BoxLayout:
+                        Label:
+                            halign: "left"
+                            text: "Timezone"
+                        TextInput:
+                BoxLayout:
+                    spacing: (0.01 * self.parent.height)
+                    padding: (0.01 * self.parent.height)
+
+                    BoxLayout:
+                        Label:
+                            halign: "left"
+                            text: "Status code:"
+                        Label:
+                    BoxLayout:
+                        Label:
+                            halign: "left"
+                            text: "Method"
+                        Label:
+                BoxLayout:
+                    spacing: (0.01 * self.parent.height)
+                    padding: (0.01 * self.parent.height)
+
+                    Label:
+                        halign: "left"
+                        text: "Resource"
+                    TextInput:
+                BoxLayout:
+                    spacing: (0.01 * self.parent.height)
+                    padding: (0.01 * self.parent.height)
+
+                    Label:
+                        halign: "left"
+                        text: "Size"
+                    Label:
