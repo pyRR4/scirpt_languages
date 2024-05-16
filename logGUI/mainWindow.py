@@ -136,3 +136,10 @@ class LogGrid(GridLayout):
 class LogTextInput(TextInput):
     pass
 
+
+class LogLabel(Label):
+    pass
+
+# spacing: (0.01 * self.parent.height)
+#                 padding: (0.04 * self.parent.height)
+

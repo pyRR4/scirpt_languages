@@ -3,6 +3,7 @@
 
 <LogTextInput>:
     halign: 'left'
+    multiline: False
     valign: 'top'
     shorten: True
     ellipsis: True
@@ -27,6 +28,15 @@
         Rectangle:
             pos: self.pos
             size: self.size
+
+<LogLabel>:
+    text_size: self.width, None
+    halign: 'left'
+    valign: 'top'
+    shorten: True
+    ellipsis: True
+    shorten_from: 'right'
+
 
 <RV>:
     default_size_hint: 1, 1
@@ -71,29 +81,30 @@
                 BoxLayout:
                     pos: self.parent.pos
 
+#======================================================PATH
                     LogGrid:
                         size_hint: 0.9, 0.4
                         pos_hint: {'center_y': .5}
 
                         LogTextInput:
                             id: path
+                            hint_text: "Full path to file"
                             font_size: self.parent.height - 20
 
+#======================================================LOAD
                     Button:
                         size_hint: 0.1, 0.4
                         pos_hint: {'center_y': .5}
                         text: "Load"
-                        on_release: logwindow.load_file()
 
-
-
-
+#======================================================OPEN
             LogGrid:
-                size_hint: 0.3, 0.6
+                size_hint: 0.3, 0.5
                 pos_hint: {'center_y': .5}
-                padding: 0.1 * self.parent.height
+                padding: (0.005 * root.width), (0.005 * root.height)
                 Button:
                     text: "Open"
+                    on_release: logwindow.load_file()
 
 
         BoxLayout:
@@ -106,107 +117,130 @@
                 size_hint: 0.6, 1
 
                 BoxLayout:
-                    spacing: (0.05 * self.parent.width)
-                    padding: (0.04 * self.parent.width)
                     size_hint: 1, 0.2
                     BoxLayout:
-                        Label:
+#======================================================FROM
+                        LogLabel:
+                            halign: 'center'
+                            size_hint: 0.25, 1
                             text: "From:"
                         LogGrid:
-                            size_hint: 0.8, 0.9
-                            pos_hint: {'center_y': .5}
+                            size_hint: 0.75, 0.7
+                            padding: (0.005 * root.width), (0.005 * root.height)
+                            pos_hint: {'center_y': .5, 'center_x': .5}
 
                             LogTextInput:
                                 id: start_date
-                                size: self.parent.size
+                                size_hint: 1, 1
                                 font_size: self.parent.height - 20
-
+#======================================================TO
                     BoxLayout:
-                        Label:
+                        LogLabel:
+                            halign: 'center'
                             text: "To:"
+                            size_hint: 0.25, 1
                         LogGrid:
-                            size_hint: 0.8, 0.9
-                            pos_hint: {'center_y': .5}
+                            size_hint: 0.75, 0.7
+                            padding: (0.005 * root.width), (0.005 * root.height)
+                            pos_hint: {'center_y': .5, 'center_x': .5}
 
                             LogTextInput:
                                 id: end_date
-                                size: self.parent.size
                                 font_size: self.parent.height - 20
+#======================================================RV
                 RV:
                     id: rv
 
 
             BoxLayout:
+                padding: 0, (0.06 * self.parent.height)
                 orientation: "vertical"
                 size_hint: 0.4, 1
-                spacing: (0.01 * self.parent.height)
-                padding: (0.04 * self.parent.height)
 
                 BoxLayout:
-                    spacing: (0.01 * self.parent.height)
-                    padding: (0.01 * self.parent.height)
 
-                    Label:
-                        halign: "left"
-                        text: "Remote host"
-                    LogTextInput:
-                        id: host
-                BoxLayout:
-                    spacing: (0.01 * self.parent.height)
-                    padding: (0.01 * self.parent.height)
+#======================================================HOST
+                    LogLabel:
+                        size_hint: 0.3, 1
+                        text: "Remote host:"
 
-                    Label:
-                        halign: "left"
-                        text: "Date"
-                    LogTextInput:
-                        id: date
-                BoxLayout:
-                    spacing: (0.01 * self.parent.height)
-                    padding: (0.01 * self.parent.height)
+                    LogGrid:
+                        size_hint: 0.7, 0.7
+                        padding: (0.005 * root.width), (0.005 * root.height)
+                        pos_hint: {'center_y': .5, 'center_x': .5}
 
-                    BoxLayout:
-                        Label:
-                            halign: "left"
-                            text: "Time"
                         LogTextInput:
-                            id: time
-                    BoxLayout:
-                        Label:
-                            halign: "left"
-                            text: "Timezone"
-                        LogTextInput:
-                            id: timezone
+                            id: host
                 BoxLayout:
-                    spacing: (0.01 * self.parent.height)
-                    padding: (0.01 * self.parent.height)
+#======================================================DATE
+                    LogLabel:
+                        halign: "left"
+                        size_hint: 0.3, 1
+                        text: "Date:"
+                    LogGrid:
+                        size_hint: 0.7, 0.7
+                        padding: (0.005 * root.width), (0.005 * root.height)
+                        pos_hint: {'center_y': .5, 'center_x': .5}
 
+                        LogTextInput:
+                            id: date
+                BoxLayout:
+#======================================================TIME
                     BoxLayout:
-                        Label:
-                            halign: "left"
+                        LogLabel:
+                            text: "Time:"
+                            size_hint: 0.3, 1
+                        LogGrid:
+                            size_hint: 0.7, 0.7
+                            padding: (0.005 * root.width), (0.005 * root.height)
+                            pos_hint: {'center_y': .5, 'center_x': .5}
+
+                            LogTextInput:
+                                id: time
+                    BoxLayout:
+#======================================================TIMEZONE
+                        LogLabel:
+                            text: "Timezone:"
+                            halign: 'center'
+                            size_hint: 0.5, 1
+                        LogGrid:
+                            size_hint: 0.5, 0.7
+                            padding: (0.005 * root.width), (0.005 * root.height)
+                            pos_hint: {'center_y': .5, 'center_x': .5}
+
+                            LogTextInput:
+                                id: timezone
+                BoxLayout:
+#======================================================CODE
+                    BoxLayout:
+                        LogLabel:
                             text: "Status code:"
-                        Label:
+                            multiline: True
+                            shorten: False
+                        LogLabel:
                             id: status_code
+#======================================================METHOD
                     BoxLayout:
-                        Label:
-                            halign: "left"
-                            text: "Method"
-                        Label:
+                        LogLabel:
+                            text: "Method:"
+                            halign: 'center'
+                        LogLabel:
                             id: method
                 BoxLayout:
-                    spacing: (0.01 * self.parent.height)
-                    padding: (0.01 * self.parent.height)
+#======================================================RESOURCE
+                    LogLabel:
+                        text: "Resource:"
+                        size_hint: 0.3, 1
+                    LogGrid:
+                        size_hint: 0.7, 0.7
+                        padding: (0.005 * root.width), (0.005 * root.height)
+                        pos_hint: {'center_y': .5, 'center_x': .5}
 
-                    Label:
-                        halign: "left"
-                        text: "Resource"
-                    LogTextInput:
-                        id: resource
+                        LogTextInput:
+                            id: resource
                 BoxLayout:
-                    spacing: (0.01 * self.parent.height)
-                    padding: (0.01 * self.parent.height)
-
-                    Label:
-                        halign: "left"
-                        text: "Size"
-                    Label:
+#======================================================SIZE
+                    LogLabel:
+                        text: "Size:"
+                    LogLabel:
                         id: bytes
