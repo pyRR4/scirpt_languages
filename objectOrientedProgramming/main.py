@@ -32,11 +32,11 @@ if __name__ == '__main__':
     print("\n\n=================Długość dziennika:===================")
     print(len(journal)) #__len__
 
-    print("\n\n=================Adresy IP wypisywane iteratorem, przy użyciu has_ip:===================")
-    iterator = iter(journal)
-    for element in iterator:
-        if element.has_ip:
-            print(element.get_ipv4s())
+    # print("\n\n=================Adresy IP wypisywane iteratorem, przy użyciu has_ip:===================")
+    # iterator = iter(journal)
+    # for element in iterator:
+    #     if element.has_ip:
+    #         print(element.get_ipv4s())
 
     print("\n\n=================__contains__:===================")
     print("Sprawdzany log: \"jakis log\"")
@@ -51,14 +51,14 @@ if __name__ == '__main__':
 
     for el in helper_list: #duck_typing
         if el.validate():
-            print(f"{el} validated correctly")
+            print(f"{str(el)} validated correctly")
         else:
-            print(f"{el} validated incorrectly") #FILTER username is incorrect
+            print(f"{str(el)} validated incorrectly") #FILTER username is incorrect
 
-    print("\n\n=================__getattr__ - IP:===================")
-    ip_journal = journal.__getattr__(ipaddress.IPv4Address("183.62.140.253"))
-    for elem in ip_journal[:10]:
-        print(elem)
+    # print("\n\n=================__getattr__ - IP:===================")
+    # ip_journal = journal.__getattr__(ipaddress.IPv4Address("183.62.140.253"))
+    # for elem in ip_journal[:10]:
+    #     print(elem)
 
     print("\n\n=================__getattr__ - date:===================")
     date_test = datetime.datetime.strptime("Dec 10 17:00:39", "%b %d %H:%M:%S")

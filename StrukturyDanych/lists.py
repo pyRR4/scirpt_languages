@@ -1,7 +1,7 @@
 from datetime import datetime
 import sys
 
-import printFunctions
+from StrukturyDanych import printFunctions
 
 
 def read_log(source):
@@ -11,13 +11,14 @@ def read_log(source):
         try:
             domain = tab[0]
             date = datetime.strptime((tab[3])[1::], "%d/%b/%Y:%H:%M:%S")
+            timezone = (tab[4])[0:len(tab[4]) - 1]
             operation_type = (tab[5])[1::]
             path = tab[6]
             http = tab[7][0:len(tab[7]) - 1]
             code = int(tab[8])
             file_size = int(tab[9])
 
-            tupled_line = (domain, date, operation_type, path, http, code, file_size)
+            tupled_line = (domain, date, operation_type, path, http, code, file_size, timezone, line)
             logs.append(tupled_line)
 
         except ValueError:

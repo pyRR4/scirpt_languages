@@ -1,7 +1,7 @@
 import datetime
 import ipaddress
 
-from SSHLogEntry import SSHLogEntry, ValueNotFound
+from objectOrientedProgramming.SSHLogEntry import SSHLogEntry, ValueNotFound
 
 
 class SSHLogJournal:
