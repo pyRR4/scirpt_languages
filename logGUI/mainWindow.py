@@ -1,8 +1,13 @@
+import datetime
+import os.path
+import re
+
 from kivy.app import App
 from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.uix.popup import Popup
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
@@ -14,10 +19,15 @@ from StrukturyDanych.lists import read_log
 
 
 class LogApp(App):
+    def __init__(self, **kwargs):
+        super(LogApp, self).__init__(**kwargs)
+        self.log_window = None
+
     def build(self):
         #Builder.load_file("log.kv")
         self.title = "Log browser"
-        return LogWindow()
+        self.log_window = LogWindow()
+        return self.log_window
 
 
 class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
@@ -63,10 +73,11 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
         log_window = self.find_log_window()
         if log_window:
             log_window.refresh_data(index, is_selected)
-        if is_selected:
-            print("selection changed to {0}".format(rv.data[index]))
-        else:
-            print("selection removed for {0}".format(rv.data[index]))
+        if index < len(rv.data):
+            if is_selected:
+                print("selection changed to {0}".format(rv.data[index]))
+            else:
+                print("selection removed for {0}".format(rv.data[index]))
 
     def find_log_window(self):
         parent = self.parent
@@ -75,6 +86,14 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
                 return parent
             parent = parent.parent
         return None
+
+
+class LogPopup(Popup):
+    popup_text = ObjectProperty(None)
+
+    def __init__(self, text, **kwargs):
+        super(LogPopup, self).__init__(**kwargs)
+        self.popup_text.text = text
 
 
 class RV(RecycleView):
@@ -99,12 +118,64 @@ class LogWindow(Widget):
     logs = ObjectProperty(None)
     rv = ObjectProperty(None)
 
-    def load_file(self): #ZABEZPIECZYĆ!!!
-        f_path = self.path.text
-        with open(f_path, 'r', encoding='utf8') as f:
-            self.logs = read_log(f)
+    def show_file_chooser(self):
+        file_chooser = FileChooser(self.set_path)
+        file_chooser.file_chooser.path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))
+        file_chooser.open()
 
-        self.rv.data = [{'viewclass': 'SelectableLabel', 'text': log[8], 'selected': False} for log in self.logs]
+    def set_path(self, pth):
+        self.path.text = pth
+
+    def filter_logs(self):
+        new_data = []
+        end_text = self.end_date.text
+        start_text = self.start_date.text
+        end_date = None
+        start_date = None
+        if end_text != "":
+            try:
+                end_date = datetime.datetime.strptime(end_text, "%d-%m-%Y")
+            except ValueError:
+                pass #popup!!!!
+        if start_text != "":
+            try:
+                start_date = datetime.datetime.strptime(start_text, "%d-%m-%Y")
+            except ValueError:
+                pass #popup!!!!
+        if self.logs:
+            if end_date and start_date:
+                for log in self.logs:
+                    if start_date < log[1] < end_date:
+                        new_data.append(log)
+
+            elif self.logs and end_date:
+                for log in self.logs:
+                    if log[1] < end_date:
+                        new_data.append(log)
+
+            elif self.logs and start_date:
+                for log in self.logs:
+                    if start_date < log[1]:
+                        new_data.append(log)
+
+            self.rv.data = [{'viewclass': 'SelectableLabel', 'text': log[8], 'selected': False} for log in new_data]
+
+        else: #popup!
+            pass
+
+    def load_file(self):
+        f_path = self.path.text
+        if os.path.isfile(f_path):
+            with open(f_path, 'r', encoding='utf8') as f:
+                self.logs = read_log(f)
+
+            self.rv.data = [{'viewclass': 'SelectableLabel', 'text': log[8], 'selected': False} for log in self.logs]
+            if self.rv.data is []:
+                popup = LogPopup("Wybrany plik nie zawiera logów, które można wyświetlić!")
+                popup.open()
+        else:
+            popup = LogPopup("Niepoprawna ścieżka do pliku lub plik nie istnieje!")
+            popup.open()
 
     def refresh_data(self, index, is_selected):
         if is_selected:
@@ -137,8 +208,54 @@ class LogTextInput(TextInput):
     pass
 
 
+class DateInput(TextInput):
+    date_regex = re.compile(r'^\d{2}-\d{2}-\d{4}$')
+
+    def __init__(self, **kwargs):
+        super(DateInput, self).__init__(**kwargs)
+
+    def insert_text(self, substring, from_undo=False):
+        allowed_chars = '0123456789-'
+        text = self.text
+
+        if len(text) == 2 or len(text) == 5:
+            substring = '-' + substring
+
+        if len(text) < 10 and all(char in allowed_chars for char in substring):
+            super(DateInput, self).insert_text(substring, from_undo=from_undo)
+
+    def on_focus(self, instance, value):
+        if not value:
+            if not self.date_regex.match(self.text):
+                self.text = ''
+                self.hint_text = 'Invalid date format. Use DD-MM-YYYY'
+            else:
+                log_window = App.get_running_app().log_window
+                box_lay = self.parent.parent
+                log_label = None
+                for child in box_lay.children:
+                    if isinstance(child, Label):
+                        log_label = child
+                if log_label:
+                    is_start = log_label.text == "From:"
+                    log_window.filter_logs()
+
+
 class LogLabel(Label):
     pass
+
+
+class FileChooser(Popup):
+    def __init__(self, on_selection, **kwargs):
+        super(FileChooser, self).__init__(**kwargs)
+        self.file_chooser = self.ids.filechooser
+        self.file_chooser.bind(selection=lambda chooser, selection: self.on_file_select(on_selection, selection))
+
+    def on_file_select(self, on_selection, selection):
+        if selection:
+            on_selection(selection[0])
+        self.dismiss()
+
 
 # spacing: (0.01 * self.parent.height)
 #                 padding: (0.04 * self.parent.height)

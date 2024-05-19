@@ -9,6 +9,62 @@
     ellipsis: True
     shorten_from: 'right'
 
+<DateInput>:
+    halign: 'left'
+    multiline: False
+    valign: 'top'
+    shorten: True
+    ellipsis: True
+    shorten_from: 'right'
+    hint_text: 'DD-MM-YYYY'
+
+<FileChooser>:
+    title: 'Select a file'
+    size_hint: None, None
+    size: 500, 400
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        FileChooserListView:
+            id: filechooser
+        BoxLayout:
+            size_hint_y: None
+            height: '40dp'
+            Button:
+                text: 'Cancel'
+                on_release: root.dismiss()
+
+
+<LogPopup>:
+    id: log_popup
+    title: 'Error occured!'
+    popup_text: popup_text
+    size_hint: None, None
+    size: 400, 250
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            halign: 'center'
+            size: 200, 100
+            id: popup_text
+            text_size: self.width, None
+            multiline: True
+
+        Button:
+            size_hint: None, None
+            size: 200, 50
+            pos_hint: {'center_y': .5, 'center_x': .5}
+            padding: 10
+            spacing: 10
+            text: 'Close'
+            on_release: log_popup.dismiss()
+
 
 <LogGrid>:
     cols: 1
@@ -41,6 +97,8 @@
 <RV>:
     default_size_hint: 1, 1
     viewclass: 'SelectableLabel'
+    bar_width: 10
+    scroll_type: ['bars', 'content']
     SelectableRecycleBoxLayout:
         default_size: None, dp(56)
         default_size_hint: 1, None
@@ -96,6 +154,7 @@
                         size_hint: 0.1, 0.4
                         pos_hint: {'center_y': .5}
                         text: "Load"
+                        on_release: logwindow.show_file_chooser()
 
 #======================================================OPEN
             LogGrid:
@@ -129,10 +188,10 @@
                             padding: (0.005 * root.width), (0.005 * root.height)
                             pos_hint: {'center_y': .5, 'center_x': .5}
 
-                            LogTextInput:
+                            DateInput:
                                 id: start_date
                                 size_hint: 1, 1
-                                font_size: self.parent.height - 20
+                                font_size: self.parent.height - 28
 #======================================================TO
                     BoxLayout:
                         LogLabel:
@@ -144,9 +203,10 @@
                             padding: (0.005 * root.width), (0.005 * root.height)
                             pos_hint: {'center_y': .5, 'center_x': .5}
 
-                            LogTextInput:
+                            DateInput:
                                 id: end_date
-                                font_size: self.parent.height - 20
+                                size_hint: 1, 1
+                                font_size: self.parent.height - 28
 #======================================================RV
                 RV:
                     id: rv
