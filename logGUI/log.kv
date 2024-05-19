@@ -167,6 +167,7 @@
 
 
         BoxLayout:
+            size_hint: 1, 0.75
             spacing: 0.05 * root.height
 
             BoxLayout:
@@ -304,3 +305,13 @@
                         text: "Size:"
                     LogLabel:
                         id: bytes
+
+        BoxLayout:
+            size_hint: 1, 0.05
+            spacing: (self.width / 2)
+
+            Button:
+                text: "Previous log"
+            Button:
+                text: "Next log"
+                on_release: logwindow.next_log()

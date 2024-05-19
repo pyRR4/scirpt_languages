@@ -24,7 +24,6 @@ class LogApp(App):
         self.log_window = None
 
     def build(self):
-        #Builder.load_file("log.kv")
         self.title = "Log browser"
         self.log_window = LogWindow()
         return self.log_window
@@ -49,14 +48,6 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
     selected = BooleanProperty(False)
     selectable = BooleanProperty(True)
 
-    def expand_label(self):
-        self.text_size = (self.width, None)
-        self.height = self.texture_size[1]
-
-    def shrink_label(self):
-        self.text_size = (None, None)
-        self.height = 56
-
     def refresh_view_attrs(self, rv, index, data):
         self.index = index
         return super(SelectableLabel, self).refresh_view_attrs(
@@ -70,7 +61,7 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
 
     def apply_selection(self, rv, index, is_selected):
         self.selected = is_selected
-        log_window = self.find_log_window()
+        log_window = App.get_running_app().log_window
         if log_window:
             log_window.refresh_data(index, is_selected)
         if index < len(rv.data):
@@ -78,14 +69,6 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
                 print("selection changed to {0}".format(rv.data[index]))
             else:
                 print("selection removed for {0}".format(rv.data[index]))
-
-    def find_log_window(self):
-        parent = self.parent
-        while parent:
-            if isinstance(parent, LogWindow):
-                return parent
-            parent = parent.parent
-        return None
 
 
 class LogPopup(Popup):
@@ -100,6 +83,11 @@ class RV(RecycleView):
     def __init__(self, **kwargs):
         super(RV, self).__init__(**kwargs)
         self.data = []
+
+    def select_node(self, index):
+        if index is not None:
+            self.layout_manager.deselect_node(index)
+        self.layout_manager.select_node(index)
 
 
 class LogWindow(Widget):
@@ -117,6 +105,7 @@ class LogWindow(Widget):
     bytes = ObjectProperty(None)
     logs = ObjectProperty(None)
     rv = ObjectProperty(None)
+    selected_index = ObjectProperty(None)
 
     def show_file_chooser(self):
         file_chooser = FileChooser(self.set_path)
@@ -158,10 +147,41 @@ class LogWindow(Widget):
                     if start_date < log[1]:
                         new_data.append(log)
 
+            else:
+                new_data = self.logs
+
             self.rv.data = [{'viewclass': 'SelectableLabel', 'text': log[8], 'selected': False} for log in new_data]
 
         else: #popup!
             pass
+
+    def next_log(self):
+        if self.rv.data and self.selected_index is not None and self.selected_index < (len(self.rv.data) - 1):
+            self.selected_index += 1
+            self.rv.select_node(self.selected_index)
+            self.scroll_to_index(self.selected_index, False)
+
+    def previous_log(self):
+        if self.rv.data and self.selected_index is not None and self.selected_index > 0:
+            self.selected_index -= 1
+            self.rv.select_node(self.selected_index)
+            self.scroll_to_index(self.selected_index, True)
+
+    def scroll_to_index(self, index, is_up):
+        if self.rv:
+            total_count = len(self.rv.data)
+            if total_count == 0:
+                return
+            layout = self.rv.layout_manager
+            if layout:
+                if is_up:
+                    proportion = index / total_count
+                    scroll_y = 1 - proportion
+                    self.rv.scroll_y = scroll_y
+                else:
+                    proportion = index / total_count
+                    scroll_y = 1 - proportion
+                    self.rv.scroll_y = scroll_y
 
     def load_file(self):
         f_path = self.path.text
@@ -169,7 +189,8 @@ class LogWindow(Widget):
             with open(f_path, 'r', encoding='utf8') as f:
                 self.logs = read_log(f)
 
-            self.rv.data = [{'viewclass': 'SelectableLabel', 'text': log[8], 'selected': False} for log in self.logs]
+            self.filter_logs()
+
             if self.rv.data is []:
                 popup = LogPopup("Wybrany plik nie zawiera logów, które można wyświetlić!")
                 popup.open()
@@ -179,6 +200,7 @@ class LogWindow(Widget):
 
     def refresh_data(self, index, is_selected):
         if is_selected:
+            self.selected_index = index
             self.host.text = (self.logs[index])[0]
             no_hour_date = (self.logs[index])[1].date()
             hour = (self.logs[index])[1].time()
@@ -237,7 +259,6 @@ class DateInput(TextInput):
                     if isinstance(child, Label):
                         log_label = child
                 if log_label:
-                    is_start = log_label.text == "From:"
                     log_window.filter_logs()
 
 
@@ -255,8 +276,4 @@ class FileChooser(Popup):
         if selection:
             on_selection(selection[0])
         self.dismiss()
-
-
-# spacing: (0.01 * self.parent.height)
-#                 padding: (0.04 * self.parent.height)
 
