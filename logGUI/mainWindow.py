@@ -159,29 +159,24 @@ class LogWindow(Widget):
         if self.rv.data and self.selected_index is not None and self.selected_index < (len(self.rv.data) - 1):
             self.selected_index += 1
             self.rv.select_node(self.selected_index)
-            self.scroll_to_index(self.selected_index, False)
+            self.scroll_to_index(self.selected_index)
 
     def previous_log(self):
         if self.rv.data and self.selected_index is not None and self.selected_index > 0:
             self.selected_index -= 1
             self.rv.select_node(self.selected_index)
-            self.scroll_to_index(self.selected_index, True)
+            self.scroll_to_index(self.selected_index)
 
-    def scroll_to_index(self, index, is_up):
+    def scroll_to_index(self, index):
         if self.rv:
             total_count = len(self.rv.data)
             if total_count == 0:
                 return
             layout = self.rv.layout_manager
             if layout:
-                if is_up:
-                    proportion = index / total_count
-                    scroll_y = 1 - proportion
-                    self.rv.scroll_y = scroll_y
-                else:
-                    proportion = index / total_count
-                    scroll_y = 1 - proportion
-                    self.rv.scroll_y = scroll_y
+                proportion = index / total_count
+                scroll_y = 1 - proportion
+                self.rv.scroll_y = scroll_y
 
     def load_file(self):
         f_path = self.path.text
