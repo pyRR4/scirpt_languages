@@ -35,14 +35,6 @@ def test_no_ip():
         entry.get_ipv4s()
 
 
-entry_classes = {
-    "IncorrectPasswordEntry": IncorrectPasswordEntry,
-    "CorrectPasswordEntry": CorrectPasswordEntry,
-    "ErrorEntry": ErrorEntry,
-    "OtherEntry": OtherEntry
-}
-
-
 @pytest.mark.parametrize("log, expected_class", [
     ("Jan  4 04:00:49 LabSZ sshd[16122]: Failed password for root from 182.100.67.52 port 9186 ssh2"
      , IncorrectPasswordEntry),
